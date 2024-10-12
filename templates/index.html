@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ad Copy Generator</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            background-color: #1c1c1c;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+        }
+
+        label {
+            font-weight: 500;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            align-self: flex-start;
+        }
+
+        textarea, input[type="text"] {
+            background-color: #333;
+            border: 1px solid #555;
+            border-radius: 8px;
+            color: #fff;
+            padding: 10px;
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        input[type="submit"] {
+            background-color: #1da1f2;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0d8ddb;
+        }
+
+        #loading {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .result {
+            margin-top: 40px;
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .tweet-frame {
+            border: 1px solid #333;
+            background-color: #1c1c1c;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: left;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+        }
+
+        .tweet-frame p {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .tweet-frame span {
+            color: #1da1f2;
+        }
+
+        .tweet-explanation {
+            font-size: 0.9rem;
+            color: #555;
+            margin-top: 10px;
+        }
+
+        .tweet-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .tweet-header img {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .tweet-header .username {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .tweet-header .handle {
+            color: #777;
+            font-size: 0.9rem;
+            margin-left: 5px;
+        }
+
+        .promote-button {
+            background-color: #1da1f2;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        .promote-button:hover {
+            background-color: #0d8ddb;
+        }
+
+        .tweet-link {
+            margin-top: 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #1da1f2;
+        }
+
+        .tweet-link a {
+            color: #1da1f2;
+            text-decoration: none;
+            border-bottom: 1px solid #1da1f2;
+        }
+
+        .tweet-link a:hover {
+            color: #0d8ddb;
+            border-bottom-color: #0d8ddb;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            form, .result {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Craft Your Ad Copy</h1>
+        <form id="adForm">
+            <label for="product_event_info">Product/Event Info:</label><br>
+            <textarea id="product_event_info" name="product_event_info" rows="4" required></textarea><br><br>
+            
+            <label for="city">City:</label><br>
+            <input type="text" id="city" name="city" required><br><br>
+            
+            <input type="submit" value="Generate">
+        </form>
+        
+        <div id="loading">
+            <p>Generating your ad copy... <img src="{{ url_for('static', filename='loading.gif') }}" alt="Loading..." /></p>
+        </div>
+        
+        <div class="result" id="result">
+            <!-- The generated ad copies will appear here -->
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('adForm').addEventListener('submit', function(event) {
+            event.preventDefault();  // Prevent the form from submitting the traditional way
+            
+            // Show loading spinner
+            document.getElementById('loading').style.display = 'block';
+            
+            const formData = new FormData(this);
+            
+            // Make an AJAX request to generate ad copy
+            fetch('/generate', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Hide loading spinner
+                document.getElementById('loading').style.display = 'none';
+                
+                // Display the ad copies in tweet-like frames
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = '';  // Clear previous results
+                
+                data.forEach((ad, index) => {
+                    resultDiv.innerHTML += `
+                        <div class="tweet-frame" id="tweet-frame-${index}">
+                            <div class="tweet-header">
+                                <img src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png" alt="Profile Pic">
+                                <div class="username">X.AI Events</div>
+                                <div class="handle">@xaievents</div>
+                            </div>
+                            <p id="tweet-text-${index}">
+                                ${ad.ad_copy}<br><br>
+                                <span>#${ad.trend}</span>
+                            </p>
+                            <p class="tweet-explanation">
+                                ${ad.explanation}
+                            </p>
+                            <button class="promote-button" onclick="publishTweet(${index})">Publish</button>
+                            <div class="tweet-link" id="tweet-link-${index}" style="display: none;"></div>
+                        </div>
+                    `;
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('result').innerHTML = '<p>There was an error generating your ad copy. Please try again.</p>';
+            });
+        });
+
+        function publishTweet(index) {
+            const tweetText = document.getElementById(`tweet-text-${index}`).innerText;
+
+            fetch('/publish', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ tweet_text: tweetText })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Show tweet link inline for the correct variation
+                    const tweetLinkDiv = document.getElementById(`tweet-link-${index}`);
+                    tweetLinkDiv.innerHTML = `<p>Tweet successfully published! <a href="${data.tweet_url}" target="_blank">View it here</a></p>`;
+                    tweetLinkDiv.style.display = 'block';
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('There was an error publishing the tweet.');
+            });
+        }
+    </script>
+</body>
+</html>
