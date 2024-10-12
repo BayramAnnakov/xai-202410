@@ -44,16 +44,15 @@ def get_ad_copy(product, city):
         Today is October 12th, 2024
         
         Instructions:
-        1. Get today's headlines in {city}
-        2. Use the headlines information to generate 3 variations of ad copies for a {product}
-        3. Review the ad copies and make any necessary changes to ensure it is relevant to one of the topics people are talking about in San Francisco as of Oct 12. Be specific about the topic you choose.
+        1. Get today's headlines in {city} from X (formerly Twitter) to understand what people are talking about.
+        2. Use the headlines information to generate 3 variations of ad copies for a {product}. Use local headlines, events or news to make the ad copy relevant to the audience in {city}. 
+        3. Review the ad copies and make any necessary changes to ensure it is relevant to one of the topics people are talking about in San Francisco as of Oct 12 2024. Be specific about the topic you choose. If you use hashtags, then ensure they are relevant to the topic and formatted without spaces between the words.
         
         Output ad copy in the following json format:
         [{{
             "ad_copy": "The X.AI hackathon is happening in San Francisco on Oct 12. Come build the future with us to support free and open AI for everyone.",
             "trend": "free and openAI",
             "explanation": "The ad copy is relevant to the topic of free and openAI that people are talking about in San Francisco as of Oct 12",
-            
         }},
         {{
             "ad_copy": "Join us for the X.AI Hackathon today! While the Blue Angels dazzle us with aerial feats over the San Francisco Bay for Fleet Week, we're diving into a different kind of innovation. Here at X.AI, we're exploring the frontiers of artificial intelligence. Let's soar to new heights together in tech as the Blue Angels do in the skies!",
