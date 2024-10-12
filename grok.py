@@ -45,10 +45,8 @@ def get_ad_copy(product, city):
         
         Instructions:
         1. Get today's headlines in {city}
-        2. Get today's trending hashtags in {city}
-        3. Use the headlines information to generate 3 variations of ad copies for a {product}
-        4. Include one of the trending and relevant hashtags into the ad copy. Make sure hashtag has just one # symbol.
-        5. Review the ad copies and make any necessary changes to ensure it is relevant to one of the topics people are talking about in San Francisco as of Oct 12. Be specific about the topic you choose.
+        2. Use the headlines information to generate 3 variations of ad copies for a {product}
+        3. Review the ad copies and make any necessary changes to ensure it is relevant to one of the topics people are talking about in San Francisco as of Oct 12. Be specific about the topic you choose.
         
         Output ad copy in the following json format:
         [{{
