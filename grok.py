@@ -26,9 +26,6 @@ def get_completion(prompt: str, system_prompt:str) -> str:
     return completion.choices[0].message
 
 
-def generate_ad_visuals(product_event_info, city):
-    compl
-
 # completion = client.chat.completions.create(
 #     model="grok-preview",
 #     messages=[
@@ -55,14 +52,14 @@ def get_ad_copy(product, city):
             "explanation": "The ad copy is relevant to the topic of free and openAI that people are talking about in San Francisco as of Oct 12",
         }},
         {{
-            "ad_copy": "Join us for the X.AI Hackathon today! While the Blue Angels dazzle us with aerial feats over the San Francisco Bay for Fleet Week, we're diving into a different kind of innovation. Here at X.AI, we're exploring the frontiers of artificial intelligence. Let's soar to new heights together in tech as the Blue Angels do in the skies!",
+            "ad_copy": "Experience the power of the iPhone 16 - it's like having Fleet Week in your pocket. Capture stunning aerial photos and videos with unparalleled clarity, just like the Blue Angels soaring above San Francisco.",
             "trend": "Fleet Week",
-            "explanation": "The ad copy is relevant to the topic of Fleet Week that people are talking about in San Francisco as of Oct 12",
+            "explanation": "The ad copy is relevant to the topic of Fleet Week, where aerial displays by the Blue Angels are a highlight, linking this event to the iPhone's superior camera capabilities.",
         }},
         {{
-            "ad_copy": "Join us for the X.AI Hackathon today! While the Blue Angels dazzle us with aerial feats over the San Francisco Bay for Fleet Week, we're diving into a different kind of innovation. Here at X.AI, we're exploring the frontiers of artificial intelligence. Let's soar to new heights together in tech as the Blue Angels do in the skies!",
-            "trend": "Fleet Week",
-            "explanation": "The ad copy is relevant to the topic of Fleet Week that people are talking about in San Francisco as of Oct 12",
+            "ad_copy": "Tune in to the sounds of innovation with AirPods 4. While the San Francisco Tech Week highlights the latest in tech, AirPods 4 provides an unparalleled audio experience for those immersed in the city's tech scene..",
+            "trend": "San Francisco Tech Week",
+            "explanation": "This ad copy aligns with San Francisco Tech Week, focusing on how AirPods 4 can enhance the experience of tech events with its superior sound technology",
         }}]
 
         Just output the json.
@@ -71,7 +68,7 @@ def get_ad_copy(product, city):
         Headline: Cultural Events: The Blue Angels performed over San Francisco Bay as part of Fleet Week, attracting attention and providing a contrast to the city's daily challenges with a display of aerial prowess.
         Ad Copy: "Join us for the X.AI Hackathon today! While the Blue Angels dazzle us with aerial feats over the San Francisco Bay for Fleet Week, we're diving into a different kind of innovation. Here at X.AI, we're exploring the frontiers of artificial intelligence. Let's soar to new heights together in tech as the Blue Angels do in the skies!"
         """,
-        system_prompt="You are Grok, you help people to generate ad copies for their products and events, by tailoring them to the trends and posts on X (formerly Twitter)",
+        system_prompt="You are AI social ads assistant; You help people to generate ad copies for their products and events, by tailoring them to the trends",
     )
 
     json_response = response.content.strip("```json").strip("```")
