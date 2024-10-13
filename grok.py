@@ -44,9 +44,9 @@ def get_ad_copy(product, city):
         Today is October 12th, 2024
         
         Instructions:
-        1. Get today's headlines in {city} from X (formerly Twitter) to understand what people are talking about.
-        2. Use the headlines information to generate 3 variations of ad copies for a {product}. Use local headlines, events or news to make the ad copy relevant to the audience in {city}. 
-        3. Review the ad copies and make any necessary changes to ensure it is relevant to one of the topics people are talking about in San Francisco as of Oct 12 2024. Be specific about the topic you choose. If you use hashtags, then ensure they are relevant to the topic and formatted without spaces between the words.
+        1. Get today's headlines in {city} to understand what people are talking about.
+        2. Use the headlines information to generate 3 variations of ad copies for a {product}. Use headlines, events or news to make the ad copy relevant to the audience in {city}. Each variatin should be unique and tailored to a different topic. Do not include hashtags.
+        3. Review the ad copies and make any necessary changes to ensure it is relevant to one of the topics people are talking about in San Francisco as of Oct 12 2024. Be specific about the topic you choose. 
         
         Output ad copy in the following json format:
         [{{

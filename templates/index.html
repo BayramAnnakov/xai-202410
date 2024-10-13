@@ -3,19 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ad Copy Generator</title>
+    <title>Ad Copy Generator with Images and Tweets</title>
     <style>
         body {
             background-color: #000;
             color: #fff;
             font-family: 'Helvetica Neue', Arial, sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
-            text-align: center;
+            align-items: flex-start;
+            min-height: 100vh;
         }
 
         h1 {
@@ -34,6 +33,7 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+            margin-bottom: 40px;
         }
 
         label {
@@ -50,7 +50,6 @@
             color: #fff;
             padding: 10px;
             width: 100%;
-            max-width: 100%;
             margin-bottom: 20px;
             font-size: 1.2rem;
         }
@@ -76,10 +75,9 @@
         }
 
         .result {
-            margin-top: 40px;
-            padding: 20px;
-            max-width: 600px;
             width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         .tweet-frame {
@@ -88,13 +86,28 @@
             border-radius: 15px;
             padding: 20px;
             text-align: left;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
             box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
         }
 
         .tweet-frame p {
             font-size: 1rem;
             line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .tweet-frame img {
+            max-width: 100%;
+            margin-top: 10px;
+            display: none; /* Hide until loaded */
+        }
+
+        .spinner {
+            display: none;
+            margin-top: 10px;
         }
 
         .tweet-frame span {
@@ -147,6 +160,30 @@
             background-color: #0d8ddb;
         }
 
+        .relevant-tweets {
+            margin-top: 20px;
+            background-color: #111;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .relevant-tweets p {
+            font-size: 0.9rem;
+            color: #ccc;
+            margin: 5px 0;
+        }
+
+        .relevant-tweets a {
+            color: #1da1f2;
+            text-decoration: none;
+            border-bottom: 1px solid #1da1f2;
+        }
+
+        .relevant-tweets a:hover {
+            color: #0d8ddb;
+            border-bottom-color: #0d8ddb;
+        }
+
         .tweet-link {
             margin-top: 20px;
             font-size: 1.1rem;
@@ -173,6 +210,11 @@
             form, .result {
                 width: 100%;
             }
+
+            .tweet-frame {
+                width: 100%;
+                max-width: 100%;
+            }
         }
     </style>
 </head>
@@ -193,8 +235,8 @@
             <p>Generating your ad copy... <img src="{{ url_for('static', filename='loading.gif') }}" alt="Loading..." /></p>
         </div>
         
-        <div class="result" id="result">
-            <!-- The generated ad copies will appear here -->
+        <div id="result">
+            <!-- The generated ad copies and relevant tweets will appear here -->
         </div>
     </div>
     
@@ -206,7 +248,9 @@
             document.getElementById('loading').style.display = 'block';
             
             const formData = new FormData(this);
-            
+            const product_event_info = document.getElementById('product_event_info').value;
+            const city = document.getElementById('city').value;
+
             // Make an AJAX request to generate ad copy
             fetch('/generate', {
                 method: 'POST',
@@ -231,15 +275,22 @@
                             </div>
                             <p id="tweet-text-${index}">
                                 ${ad.ad_copy}<br><br>
-                                <span>${ad.trend}</span>
+                                <span>#${ad.trend}</span>
                             </p>
                             <p class="tweet-explanation">
                                 ${ad.explanation}
                             </p>
+                            <div class="spinner" id="spinner-${index}">Generating image... <img src="{{ url_for('static', filename='loading.gif') }}" alt="Spinner"></div>
+                            <img id="generated-image-${index}" alt="Generated Image">
+                            <div class="relevant-tweets" id="relevant-tweets-${index}">Loading relevant tweets...</div>
                             <button class="promote-button" onclick="publishTweet(${index})">Publish</button>
                             <div class="tweet-link" id="tweet-link-${index}" style="display: none;"></div>
                         </div>
                     `;
+
+                    // Call function to generate the image asynchronously
+                    generateImage(ad.ad_copy, index);
+                    fetchRelevantTweets(ad.trend, city, index);
                 });
             })
             .catch(error => {
@@ -249,20 +300,69 @@
             });
         });
 
+        function generateImage(prompt, index) {
+            // Show spinner
+            document.getElementById(`spinner-${index}`).style.display = 'block';
+
+            fetch('/generate_image', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ prompt: prompt })
+            })
+            .then(response => response.json())
+            .then(data => {
+
+                document.getElementById(`spinner-${index}`).style.display = 'none';
+                const imageElement = document.getElementById(`generated-image-${index}`);
+                imageElement.src = data.image;
+                imageElement.style.display = 'block'; // Show the image
+
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById(`spinner-${index}`).innerHTML = '<p>Error generating image.</p>';
+            });
+        }
+
+        function fetchRelevantTweets(eventInfo, city, index) {
+            fetch('/fetch_tweets', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ event_info: eventInfo, city: city })
+            })
+            .then(response => response.json())
+            .then(tweets => {
+                const tweetsDiv = document.getElementById(`relevant-tweets-${index}`);
+                tweetsDiv.innerHTML = '';  // Clear loading message
+                
+                tweets.forEach(tweet => {
+                    tweetsDiv.innerHTML += `<p>${tweet.text} - <a href="${tweet.url}" target="_blank">View Tweet</a></p>`;
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching tweets:', error);
+                document.getElementById(`relevant-tweets-${index}`).innerHTML = '<p>Failed to load tweets.</p>';
+            });
+        }
+
         function publishTweet(index) {
             const tweetText = document.getElementById(`tweet-text-${index}`).innerText;
+            const imageUrl = document.getElementById(`generated-image-${index}`).src;
 
             fetch('/publish', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ tweet_text: tweetText })
+                body: JSON.stringify({ tweet_text: tweetText, image_url: imageUrl })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    // Show tweet link inline for the correct variation
                     const tweetLinkDiv = document.getElementById(`tweet-link-${index}`);
                     tweetLinkDiv.innerHTML = `<p>Tweet successfully published! <a href="${data.tweet_url}" target="_blank">View it here</a></p>`;
                     tweetLinkDiv.style.display = 'block';
